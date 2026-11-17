@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Vococo Report Writer 的五组公开对比摘录：看标题、顺序和状态的变化，也看新版仍然说过头的地方。">
+<meta name="color-scheme" content="light">
+<title>五组汇报稿，改在哪里 · Vococo Report Writer</title>
+<style>
+:root {
+  --paper:#f8f6f0; --surface:#fffefa; --ink:#292b27; --muted:#66685f;
+  --line:#d6d7cc; --accent:#9b4329; --mark:#f5e0a7; --focus:#185c83;
+  --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",serif;
+  --sans:"PingFang SC","Microsoft YaHei",sans-serif;
+  --tiny:.75rem; --small:.875rem; --body:1rem; --lead:1.125rem;
+  --title:clamp(2.25rem,5vw,4.5rem); --section:clamp(1.4rem,2.7vw,2rem);
+  --s1:.375rem; --s2:.75rem; --s3:1rem; --s4:1.5rem; --s5:2rem; --s6:3rem; --s7:5rem;
+  --page:76rem; --border:1px; --focus-width:3px; --radius:2px;
+}
+* {box-sizing:border-box}
+html {scroll-padding-top:var(--s7)}
+body {margin:0;background:var(--paper);color:var(--ink);font:var(--body)/1.85 var(--sans)}
+a {color:inherit;text-underline-offset:.25em}
+a:hover {color:var(--accent)}
+a:focus-visible,button:focus-visible,summary:focus-visible {outline:var(--focus-width) solid var(--focus);outline-offset:var(--s1)}
+button {font:inherit;cursor:pointer}
+.skip {position:absolute;left:var(--s3);top:var(--s3);background:var(--surface);padding:var(--s2);transform:translateY(-200%);z-index:5}
+.skip:focus {transform:none}
+.wrap {width:min(var(--page),calc(100% - var(--s6)));margin-inline:auto}
+.masthead {padding-block:var(--s4);display:flex;justify-content:space-between;align-items:baseline;border-bottom:var(--border) solid var(--line);gap:var(--s3)}
+.brand {font-size:var(--small);font-weight:600;letter-spacing:.035em;text-decoration:none}
+.edition {color:var(--muted);font-size:var(--tiny)}
+.hero {padding:var(--s7) 0 var(--s6);max-width:52rem}
+.eyebrow {font-size:var(--small);color:var(--accent);margin:0 0 var(--s3)}
+h1 {font:500 var(--title)/1.22 var(--serif);letter-spacing:-.035em;margin:0 0 var(--s4);text-wrap:balance}
+.intro {font-size:var(--lead);max-width:42rem;margin:0}
+.scope {font-size:var(--small);color:var(--muted);margin:var(--s4) 0 0;max-width:44rem}
+.toolbar {position:sticky;top:0;z-index:2;background:var(--paper);border-block:var(--border) solid var(--line)}
+.toolbar-inner {display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
+nav {display:flex;gap:var(--s4);padding-block:var(--s3);overflow-x:auto}
+nav a {font-size:var(--small);text-decoration:none;white-space:nowrap}
+nav a span {color:var(--accent);font-size:var(--tiny);margin-right:var(--s1)}
+.highlight-toggle {flex-shrink:0;background:none;color:var(--muted);border:var(--border) solid var(--line);border-radius:var(--radius);padding:var(--s1) var(--s2);font-size:var(--tiny)}
+.case {padding-block:var(--s6);border-bottom:var(--border) solid var(--line);scroll-margin-top:var(--s3)}
+.case-meta {display:flex;justify-content:space-between;gap:var(--s3);color:var(--muted);font-size:var(--tiny)}
+h2 {font:600 var(--section)/1.5 var(--serif);margin:var(--s2) 0 var(--s4);text-wrap:balance}
+.comparison {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:var(--border) solid var(--line);background:var(--surface)}
+.version {padding:var(--s4);min-width:0}
+.version + .version {border-left:var(--border) solid var(--line)}
+h3 {font-size:var(--small);font-weight:600;margin:0}
+.version h3 {display:flex;align-items:baseline;gap:var(--s2);padding-bottom:var(--s2);border-bottom:var(--border) solid var(--line)}
+.version h3 span {font-weight:400;color:var(--muted);font-size:var(--tiny)}
+blockquote {margin:var(--s3) 0 0;overflow-wrap:anywhere;line-height:1.95;font-size:var(--body)}
+blockquote p {margin:0 0 var(--s3)}
+blockquote p:last-child {margin-bottom:0}
+.quote-heading {font-weight:600}
+strong {font-weight:600}
+mark {background:var(--mark);color:inherit;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.no-highlights mark {background:transparent}
+.reading {display:grid;grid-template-columns:10rem 1fr;column-gap:var(--s4);padding-top:var(--s4);max-width:64rem}
+.reading h3 {grid-row:span 2;color:var(--accent)}
+.reading p {margin:0 0 var(--s2)}
+.caution {font-size:var(--small);color:var(--muted)}
+.method {padding-block:var(--s5)}
+summary {cursor:pointer;font-size:var(--small);font-weight:600}
+.method-content {max-width:48rem;font-size:var(--small);color:var(--muted);margin-top:var(--s3)}
+.method-content p {margin:0 0 var(--s3)}
+footer {padding:var(--s4) 0 var(--s6);border-top:var(--border) solid var(--line);display:flex;justify-content:space-between;gap:var(--s3);font-size:var(--small);color:var(--muted)}
+@media (max-width:650px) {
+ .wrap {width:calc(100% - var(--s5))}
+ .masthead {align-items:flex-start;flex-direction:column;gap:var(--s1)}
+ .hero {padding-top:var(--s6)}
+ .toolbar-inner {gap:var(--s2);align-items:stretch;flex-direction:column;padding-block:var(--s2)}
+ nav {justify-content:space-between;gap:var(--s2);padding-block:var(--s1)}
+ .highlight-toggle {align-self:flex-end}
+ .case-meta {flex-direction:column;gap:0}
+ .comparison {grid-template-columns:minmax(0,1fr)}
+ .version + .version {border-left:0;border-top:var(--border) solid var(--line)}
+ .version {padding:var(--s3)}
+ .reading {grid-template-columns:1fr;gap:var(--s2)}
+ .reading h3 {grid-row:auto}
+ footer {flex-direction:column}
+ html {scroll-padding-top:8rem}
+}
+@media print {
+ .toolbar,.skip,footer {display:none}
+ .wrap {width:100%}
+ body {background:white}
+ .hero {padding-top:var(--s3)}
+ .case {break-inside:avoid}
+}
+</style>
+</head>
+<body id="top">
+<a class="skip" href="#examples">跳到对比正文</a>
+<header class="wrap masthead"><a class="brand" href="#top">Vococo Report Writer</a><span class="edition">中文汇报写作 · 公开摘录</span></header>
+<div class="wrap hero">
+<p class="eyebrow">先看文稿，再看规则</p>
+<h1>五组汇报稿，<br>改在哪里。</h1>
+<p class="intro">把建议提前，把依据留下。新版有些地方更好读，也有把假设说成事实的时候。</p>
+<p class="scope">以下摘自同一模型在旧、新规则下的历史生成稿，不是“未用 / 使用 Skill”的对照。仅选取无身份标识的段落与标题；未公开的上下文已省略，点评为后期人工撰写。</p>
+</div>
+<div class="toolbar"><div class="wrap toolbar-inner"><nav aria-label="对比案例"><a href="#headings"><span>01</span>标题</a><a href="#opening"><span>02</span>开头</a><a href="#status"><span>03</span>状态</a><a href="#hypothesis"><span>04</span>假设</a><a href="#evidence"><span>05</span>证据</a></nav><button class="highlight-toggle" type="button" aria-pressed="true" hidden>隐藏重点标记</button></div></div>
+<main id="examples" class="wrap" tabindex="-1"><article id="headings" class="case" aria-labelledby="title-headings">
+  <div class="case-meta"><span>01 / 合成会议材料 · 模型输出标题摘录</span><span>DeepSeek Flash</span></div>
+  <h2 id="title-headings">标题先交代决定，不只标记话题</h2>
+  <div class="comparison">
+    <section class="version" aria-label="旧规则摘录"><h3>旧规则<span>原有写法</span></h3><blockquote><p class="quote-heading">AI 视频工具选型评审会汇报</p><p class="quote-heading">一、结论</p><p class="quote-heading">三、现有证据能说明什么</p><p class="quote-heading">四、建议下一步</p></blockquote></section>
+    <section class="version" aria-label="新规则摘录"><h3>新规则<span>加入汇报约束</span></h3><blockquote><p class="quote-heading">AI 视频工具选型：<mark>先补压测、合同和比价，下周再定</mark></p><p class="quote-heading"><mark>两个方案都缺关键证据，会议没有定选哪个</mark></p><p class="quote-heading">产能只有一个实测数：免费版每周 8 条</p><p class="quote-heading">建议补齐三项证据，完成前不签约</p></blockquote></section>
+  </div>
+  <div class="reading"><h3>怎么看这处变化</h3><p>新版让读者只看标题就能知道：这次没定方案，先补证据，再作选择。旧版正文里已有这些判断，改善在于把它们搬到了标题。</p><p class="caution">材料为人工构造，产能数字也是测试设定。</p></div>
+</article>
+<article id="opening" class="case" aria-labelledby="title-opening">
+  <div class="case-meta"><span>02 / 报销演示提案 · 从正文中摘取</span><span>Kimi K3.1 Pro</span></div>
+  <h2 id="title-opening">把投入建议提前，读者先知道要决定什么</h2>
+  <div class="comparison">
+    <section class="version" aria-label="旧规则摘录"><h3>旧规则<span>原有写法</span></h3><blockquote><p><strong>建议先批准有限范围的客户演示，不立项开发完整费控系统，不报价，也不承诺生产交付。</strong> 若客户已购买成熟费控产品，先验证其原生 Agent；功能已经覆盖的，不重复开发。</p></blockquote></section>
+    <section class="version" aria-label="新规则摘录"><h3>新规则<span>加入汇报约束</span></h3><blockquote><p>建议一期聚焦“员工填单＋提交前预审”，减少手填、补资料和返工，不替换客户财务系统。当前客户、预算、采购意愿和交付期限均未确认，<mark>本次只申请有限演示及接入核查投入</mark>，完整费控系统建设留待需求确认后决策。</p></blockquote></section>
+  </div>
+  <div class="reading"><h3>怎么看这处变化</h3><p>旧版先讲两段竞品与设计参考，第三段才提出演示建议。新版把范围、用途和本次申请放在第一段；“只做有限演示”的方向两版都有。</p><p class="caution">这是顺序与表达的改善，不是新版发现了旧版没有的业务机会。旧版引文取自正文第三段，新版取自正文第一段。</p></div>
+</article>
+<article id="status" class="case" aria-labelledby="title-status">
+  <div class="case-meta"><span>03 / 报销演示提案 · 同一主题的状态说明</span><span>Kimi K3.1 Pro</span></div>
+  <h2 id="title-status">文字可以重组，未提交的状态要留住</h2>
+  <div class="comparison">
+    <section class="version" aria-label="旧规则摘录"><h3>旧规则<span>原有写法</span></h3><blockquote><p>未接通测试审批时，只显示“<mark>草稿已生成，尚未提交</mark>”，不模拟成功。</p></blockquote></section>
+    <section class="version" aria-label="新规则摘录"><h3>新规则<span>加入汇报约束</span></h3><blockquote><p>接通测试审批则返回真实实例状态，未接通则显示“<mark>草稿已生成，尚未提交</mark>”；财务依据票据、制度条款和处理日志人工审批。</p></blockquote></section>
+  </div>
+  <div class="reading"><h3>怎么看这处变化</h3><p>两版都保留了“草稿已生成，尚未提交”。新版把它放进演示流程，并补写接通审批时的状态说明。这里没有明显的旧版错误，不需要硬分胜负。</p><p class="caution">状态是否真实，仍由产品和测试确认；这些句子只是演示方案，不代表系统已经接通。</p></div>
+</article>
+<article id="hypothesis" class="case" aria-labelledby="title-hypothesis">
+  <div class="case-meta"><span>04 / 直播协作立项建议 · 需求判断摘录</span><span>DeepSeek V4 Pro</span></div>
+  <h2 id="title-hypothesis">新版删掉了“尚未验证”，判断反而更满</h2>
+  <div class="comparison">
+    <section class="version" aria-label="旧规则摘录"><h3>旧规则<span>原有写法</span></h3><blockquote><p><strong>需求侧有具体切口。</strong> 固定商品、固定话术、真人在场的小型店播团队，现在要靠人听指令点按钮。如果软件能减少这层协调负担，而不是再加一个仍需全程盯守的界面，付费意愿是存在的。这是目前唯一值得投入的<mark>假设，尚未验证</mark>。</p></blockquote></section>
+    <section class="version" aria-label="新规则摘录"><h3>新规则<span>加入汇报约束</span></h3><blockquote><p><strong><mark>付费切口存在</mark>，但价格上限受到限制。</strong> 痛点是小型店播团队要听指令逐项点按钮，协调负担重。</p></blockquote></section>
+  </div>
+  <div class="reading"><h3>怎么看这处变化</h3><p>旧版也把“付费意愿是存在的”说得偏满，但随即标明它是待验证假设。新版这一段直接写“付费切口存在”，没带上原有限定；标题更利落，证据强度却没有跟上。</p><p class="caution">这组是反例。有人要手动点按钮，只能提示潜在痛点，付费意愿还需要客户证据。新版后文的定价讨论未在此摘录。</p></div>
+</article>
+<article id="evidence" class="case" aria-labelledby="title-evidence">
+  <div class="case-meta"><span>05 / 视频生成成本汇报 · 需求判断摘录</span><span>DeepSeek Flash</span></div>
+  <h2 id="title-evidence">“需求真实存在”超出了段落能支持的范围</h2>
+  <div class="comparison">
+    <section class="version" aria-label="旧规则摘录"><h3>旧规则<span>原有写法</span></h3><blockquote><p>4. <strong><mark>付费需求未证实</mark>。</strong> 现有信息只能证明开权重和部署供给活跃，没有具名企业采购合同或验收案例。月产量低、波峰波谷大的客户，用API可能更省。</p></blockquote></section>
+    <section class="version" aria-label="新规则摘录"><h3>新规则<span>加入汇报约束</span></h3><blockquote><p class="quote-heading">六、<mark>需求真实存在</mark>，付费规模还没有证据</p><p>目前能看到的包括开权重、部署工具、租卡教程和托管报价，它们说明的是供给和开发者活跃。有四类场景有理由选择本地：品牌方未发布素材、高频批量的电商与漫剧、已有私有算力、需要固定风格。<mark>这些场景愿意</mark>为内网、合格产出、素材复用和维护责任付钱，而不只是为“装个软件”付钱。但还没有具名买方合同、采购预算或独立生产案例，对市场和付费意愿的把握偏低。</p></blockquote></section>
+  </div>
+  <div class="reading"><h3>怎么看这处变化</h3><p>新版保留了合同、采购预算与生产案例的缺口，但标题先认定“需求真实存在”，正文又写这些场景“愿意付钱”。供给活跃和合理的使用场景，还支撑不了这两步判断。</p><p class="caution">旧版在这一点上更克制。标题带结论必须服从证据，不能把可能的使用场景写成已证实的需求。</p></div>
+</article>
+<details class="method"><summary>来源、脱敏与比较边界</summary><div class="method-content">
+<p>这些片段来自保存的旧、新规则生成稿，共涉及三个模型。旧稿也使用了中文编辑规则；新稿在此基础上增加汇报约束。它们不是当前版本 Skill 的完整复现实验，也不是同一篇文章被逐句修改的记录。</p>
+<p>公开处理只做摘录：不带出人员、客户、内部项目、报价、账号、链接和原始文件路径。引文未替换词句；仅将 Markdown 标题和粗体转换为阅读排版。第一组只摘标题，其他组摘取对应段落，具体位置在各组点评中说明。</p>
+<p>第一组来自人工构造的会议材料；其余来自历史报告生成稿，业务事实未在此重新核验。这里比较表达与判断，不提供产品、市场或采购建议。</p>
+<p>选例包含改善、基本保留和退步，不据此推算胜率。完整输入、当时的提示词快照与全部输出未随此页发布；这是一组可阅读的例子，不是可复现的质量证明。</p>
+</div></details>
+</main>
+<footer class="wrap"><span>少写空话，也别删掉判断所需的依据。</span><a href="#top">回到开头 ↑</a></footer>
+<script>
+const toggle = document.querySelector('.highlight-toggle');
+toggle.hidden = false;
+toggle.addEventListener('click', () => {
+  const hidden = document.body.classList.toggle('no-highlights');
+  toggle.setAttribute('aria-pressed', String(!hidden));
+  toggle.textContent = hidden ? '显示重点标记' : '隐藏重点标记';
+});
+</script>
+</body>
+</html>
