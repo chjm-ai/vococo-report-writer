@@ -2,6 +2,8 @@
 
 这组材料检查编辑边界，不检测文章是否由 AI 撰写。
 
+`fixtures/round8/` 为人工构造的测试材料，含刻意设置的缺口。价格、调查、人物与观察仅供检查语义保持，不是经过查证的产品资料或真实会议记录。
+
 ## 文本案例
 
 让所使用的 Agent 读取仓库的 `SKILL.md`，再逐条执行 [fixtures/cases.json](fixtures/cases.json) 中的 `request` 与 `input`。分别保存输入和输出；不要把预期改写措辞提供给 Agent。
